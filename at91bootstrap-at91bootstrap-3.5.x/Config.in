@@ -1,0 +1,368 @@
+mainmenu "AT91 Bootstrap configuration"
+
+config HAVE_DOT_CONFIG
+	bool
+	default y
+	help
+	  Indicate that have an included file.
+
+source "board/Config.in"
+
+source "driver/Config.in.driver"
+
+config CONFIG_PROJECT
+	string
+	default "dataflash"	if CONFIG_DATAFLASH
+	default "flash"		if CONFIG_FLASH
+	default "nandflash"	if CONFIG_NANDFLASH
+	default "sdcard"	if CONFIG_SDCARD
+
+choice
+	prompt "Image Loading Strategy"
+	default CONFIG_LOAD_UBOOT
+
+config CONFIG_LOAD_UBOOT
+	bool "Load U-Boot into last MBYTE of SDRAM"
+	help
+	  Use this mode to load an second level boot monitor
+	  like U-boot into the last MB of SDRAM.
+
+config CONFIG_LOAD_LINUX
+	bool "Support loading Linux directly"
+	---help---
+	   Load Linux kernel directly from storage media
+
+config CONFIG_LOAD_ANDROID
+	bool "Support loading android directly"
+	help
+	   Load android image directly from storage media
+
+config CONFIG_LOAD_1MB
+	bool "Load 1 MB into start of SDRAM"
+	help
+	  Use this mode to load an embedded application
+	  which can have a size of up to 1 MByte
+
+config CONFIG_LOAD_4MB
+	bool "Load 4 MB into start of SDRAM"
+	help
+	  Use this mode to load an embedded application
+	  which can have a size of up to 4 MByte
+
+config CONFIG_LOAD_64KB
+	bool "Load 64 kB into the start of SDRAM"
+	help
+	  Use this mode to load an embedded application
+	  which can have max 64 kB Size
+
+endchoice
+
+#
+# Linux Image Storage Setup
+#
+menu "Linux Image Storage Setup"
+	depends on CONFIG_LOAD_LINUX
+
+config CONFIG_OS_MEM_BANK
+	string "Extern Memory Bank Base Address"
+	default "0x70000000" if CONFIG_AT91SAM9M10G45EK
+	default "0x20000000"
+	
+config CONFIG_OS_MEM_SIZE
+	string "Extern Memory Bank Size"
+	default "0x20000000" if CONFIG_SAMA5D3XEK
+	default "0x8000000" if CONFIG_AT91SAM9X5EK || CONFIG_AT91SAM9N12EK
+	default "0x4000000"
+	
+config CONFIG_LINUX_KERNEL_ARG_STRING
+	string "Linux kernel parameters"
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9260EK && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9261EK && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9263EK && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9RLEK && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9XEEK && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G10EK && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9G20EK && !CONFIG_SDCARD
+	default "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel)ro,-(rootfs) rw rootfstype=ubifs ubi.mtd=1 root=ubi0:rootfs" if CONFIG_AT91SAM9X5EK && !CONFIG_SDCARD
+	default "mem=128M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel)ro,-(rootfs) rw rootfstype=ubifs ubi.mtd=1 root=ubi0:rootfs" if CONFIG_AT91SAM9N12EK && !CONFIG_SDCARD
+	default "mem=512M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel)ro,-(rootfs) rw rootfstype=ubifs ubi.mtd=1 root=ubi0:rootfs" if CONFIG_SAMA5D3XEK && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 mtdparts=atmel_nand:8M(bootstrap/kernel),60M(rootfs),-(spare) root=/dev/mtdblock1 rw rootfstype=jffs2" if CONFIG_AT91SAM9M10G45EK && !CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9RLEK && CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9G10EK && CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9261EK && CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9G20EK && CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9263EK && CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9XEEK && CONFIG_SDCARD
+	default "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9X5EK && CONFIG_SDCARD
+	default "mem=128M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9N12EK && CONFIG_SDCARD
+	default "mem=512M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_SAMA5D3XEK && CONFIG_SDCARD
+	default "mem=64M console=ttyS0,115200 root=/dev/mmcblk0p2 rootdelay=2" if CONFIG_AT91SAM9M10G45EK && CONFIG_SDCARD
+
+config CONFIG_OS_IMAGE_NAME
+	string "Binary Name on SD Card"
+	depends on CONFIG_SDCARD
+	default "image.bin"
+
+config CONFIG_IMG_ADDRESS
+	depends on CONFIG_DATAFLASH || CONFIG_NANDFLASH
+	string "Flash Offset for Linux Kernel Image"
+	default "0x00008000" if CONFIG_FLASH
+	default "0x00042000" if CONFIG_DATAFLASH
+	default "0x00200000" if CONFIG_NANDFLASH
+	default	"0x00000000" if CONFIG_SDCARD
+	help
+
+config CONFIG_IMG_SIZE
+	depends on CONFIG_DATAFLASH || CONFIG_NANDFLASH
+	string "Linux Kernel Image Size"
+	default "0x300000"
+
+config CONFIG_JUMP_ADDR
+	string "The External Ram Address to Load Kernel Image"
+	default "0x72000000" if CONFIG_AT91SAM9M10G45EK
+	default "0x22000000"
+	help
+	  The entry point to which the bootstrap will pass control.
+
+config CONFIG_OF_LIBFDT
+	bool "Flattened Device Tree Support"
+	default y
+
+config CONFIG_OF_OFFSET
+	string "The Offset of Flash Device Tree Blob "
+	depends on CONFIG_OF_LIBFDT && (CONFIG_DATAFLASH || CONFIG_NANDFLASH)
+	default "0x00008400" if CONFIG_DATAFLASH
+	default "0x00180000" if CONFIG_NANDFLASH
+	default	"0x00000000" if CONFIG_SDCARD
+
+config CONFIG_OF_LENGTH
+	string "The Length of Flash Device Tree Blob"
+	depends on CONFIG_OF_LIBFDT && (CONFIG_DATAFLASH || CONFIG_NANDFLASH)
+	default "0x2FFFF"
+
+config CONFIG_OF_FILENAME
+	string "Device Tree Filename on SD Card"
+	depends on CONFIG_OF_LIBFDT && CONFIG_SDCARD
+	default "ek.dtb"
+
+config CONFIG_OF_ADDRESS
+	string "The External Ram Address to Load Device Tree Blob"
+	depends on CONFIG_OF_LIBFDT
+	default "0x71000000" if CONFIG_AT91SAM9M10G45EK
+	default "0x21000000"
+	help
+
+endmenu
+
+#
+# Android Image Storage Setup
+#
+menu "Android Image Storage Setup"
+	depends on CONFIG_LOAD_ANDROID
+
+config CONFIG_OS_MEM_BANK
+	string "Extern Memory Bank Base Address"
+	default "0x70000000" if CONFIG_AT91SAM9M10G45EK
+	default "0x20000000"
+
+config CONFIG_OS_MEM_SIZE
+	string "Extern Memory Bank Size"
+	default "0x20000000" if CONFIG_SAMA5D3XEK
+	default "0x8000000" if CONFIG_AT91SAM9X5EK || CONFIG_AT91SAM9N12EK
+	default "0x4000000"
+
+config CONFIG_LINUX_KERNEL_ARG_STRING
+	string "android kernel command line"
+	default "console=ttyS0,115200 mtdparts=atmel_nand:5M(Bootstrap),125M(system),-(userdata) ubi.mtd=1 ubi.mtd=2 rw root=ubi0:system rootfstype=ubifs init=/init androidboot.hardware=sama5d3x-ek androidboot.console=ttyS0" if CONFIG_SAMA5D3XEK && !CONFIG_SDCARD
+	default "console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait init=/init androidboot.hardware=sama5d3x-ek androidboot.console=ttyS0" if CONFIG_SAMA5D3XEK && CONFIG_SDCARD
+
+config CONFIG_OS_IMAGE_NAME
+	string "Binary Name on SD Card"
+	depends on CONFIG_SDCARD
+	default "image.bin"
+
+config CONFIG_IMG_ADDRESS
+	depends on CONFIG_DATAFLASH || CONFIG_NANDFLASH
+	string "Flash Offset for Linux Kernel Image"
+	default "0x00008000" if CONFIG_FLASH
+	default "0x00042000" if CONFIG_DATAFLASH
+	default "0x00200000" if CONFIG_NANDFLASH
+	default	"0x00000000" if CONFIG_SDCARD
+	help
+
+config CONFIG_IMG_SIZE
+	depends on CONFIG_DATAFLASH || CONFIG_NANDFLASH
+	string "Linux Kernel Image Size"
+	default "0x300000"
+
+config CONFIG_JUMP_ADDR
+	string "The External Ram Address to Load Kernel Image"
+	default "0x72000000" if CONFIG_AT91SAM9M10G45EK
+	default "0x22000000"
+	help
+	  The entry point to which the bootstrap will pass control.
+
+config CONFIG_OF_LIBFDT
+	bool "Flattened Device Tree Support"
+	default y
+
+config CONFIG_OF_OFFSET
+	string "The Offset of Flash Device Tree Blob "
+	depends on CONFIG_OF_LIBFDT && (CONFIG_DATAFLASH || CONFIG_NANDFLASH)
+	default "0x00008400" if CONFIG_DATAFLASH
+	default "0x00180000" if CONFIG_NANDFLASH
+	default	"0x00000000" if CONFIG_SDCARD
+
+config CONFIG_OF_LENGTH
+	string "The Length of Flash Device Tree Blob"
+	depends on CONFIG_OF_LIBFDT && (CONFIG_DATAFLASH || CONFIG_NANDFLASH)
+	default "0x30000"
+
+config CONFIG_OF_FILENAME
+	string "Device Tree Filename on SD Card"
+	depends on CONFIG_OF_LIBFDT && CONFIG_SDCARD
+	default "ek.dtb"
+
+config CONFIG_OF_ADDRESS
+	string "The External Ram Address to Load Device Tree Blob"
+	depends on CONFIG_OF_LIBFDT
+	default "0x71000000" if CONFIG_AT91SAM9M10G45EK
+	default "0x21000000"
+	help
+
+endmenu
+
+#
+# U-Boot Image Storage Setup
+#
+menu "U-Boot Image Storage Setup"
+	depends on CONFIG_LOAD_UBOOT
+
+config CONFIG_OS_IMAGE_NAME
+	string "Binary Name on SD Card"
+	depends on CONFIG_SDCARD
+	default "u-boot.bin"
+
+config CONFIG_IMG_ADDRESS
+	string "Flash Offset for U-Boot"
+	depends on CONFIG_DATAFLASH || CONFIG_NANDFLASH
+	default "0x00008000" if CONFIG_FLASH
+	default "0x00008400" if CONFIG_DATAFLASH
+	default "0x00040000" if CONFIG_NANDFLASH
+	default	"0x00000000" if CONFIG_SDCARD
+	help
+
+config CONFIG_IMG_SIZE
+	string "U-Boot Image Size"
+	depends on CONFIG_DATAFLASH || CONFIG_NANDFLASH
+	default	"0x00080000"
+	help
+	  at91bootstrap will copy this size of U-Boot image
+
+config CONFIG_JUMP_ADDR
+	string "The External Ram Address to Load U-Boot Image"
+	default "0x73F00000" if CONFIG_AT91SAM9M10G45EK
+	default "0x26F00000" if CONFIG_AT91SAM9X5EK || CONFIG_AT91SAM9N12EK || CONFIG_SAMA5D3XEK
+	default "0x21F00000" if CONFIG_AT91SAM9260EK || CONFIG_AT91SAM9261EK || CONFIG_AT91SAM9263EK || CONFIG_AT91SAM9G10EK || CONFIG_AT91SAM9G20EK || CONFIG_AT91SAM9RLEK
+	default "0x23F00000"
+	help
+	  The entry point to which the bootstrap will pass control.
+
+endmenu
+
+#
+# Demo App Image Storage Setup
+#
+menu "Demo Application Image Storage Setup"
+	depends on CONFIG_LOAD_64KB || CONFIG_LOAD_1MB || CONFIG_LOAD_4MB
+
+config CONFIG_OS_IMAGE_NAME
+	string "Binary Name on SD Card"
+	depends on CONFIG_SDCARD
+	default "demo-app.bin"
+
+config CONFIG_IMG_ADDRESS
+	string "Flash Offset for Demo-App"
+	depends on CONFIG_DATAFLASH || CONFIG_NANDFLASH
+	default "0x00008400" if CONFIG_DATAFLASH
+	default "0x00040000" if CONFIG_NANDFLASH
+	default	"0x00000000" if CONFIG_SDCARD
+
+config CONFIG_IMG_SIZE
+	string "Demo-App Image Size"
+	depends on CONFIG_DATAFLASH || CONFIG_NANDFLASH
+	default	"0x00010000"	if CONFIG_LOAD_64KB
+	default	"0x00100000"	if CONFIG_LOAD_1MB
+	default	"0x00400000"	if CONFIG_LOAD_4MB
+	help
+	  at91bootstrap will copy this size of Demo-App image
+
+config CONFIG_JUMP_ADDR
+	string "The External Ram Address to Load Demo-App Image"
+	default "0x70000000" if CONFIG_AT91SAM9M10G45EK
+	default "0x20000000"
+	help
+	  The entry point to which the bootstrap will pass control.
+
+endmenu
+
+config CONFIG_IMAGE_NAME
+	string
+	default "android" if CONFIG_LOAD_ANDROID
+	default "linux" if CONFIG_LOAD_LINUX
+	default "uboot" if CONFIG_LOAD_UBOOT
+	default "softapp" if CONFIG_LOAD_64KB || CONFIG_LOAD_4MB || CONFIG_LOAD_1MB
+
+config CONFIG_LONG_TEST
+	bool "Perform a memory test at startup"
+	default n
+	help
+	  
+config CONFIG_DEBUG
+	bool "Debug Support"
+	default n
+	help
+	  Output Debug messages
+choice
+	prompt "Debug Level"
+	depends on CONFIG_DEBUG
+
+config CONFIG_DEBUG_INFO
+	bool "General debug information"
+
+config CONFIG_DEBUG_LOUD
+	bool "Loud debug output"
+
+config CONFIG_DEBUG_VERY_LOUD
+	bool "Even louder debug output"
+
+endchoice
+
+config CONFIG_HW_INIT
+	bool "Call Hardware Initialization"
+	default y
+	help
+	  Initialize Hardware
+
+config CONFIG_USER_HW_INIT
+	bool "Call User specific Hardware Initialization"
+	help
+	  Initialize Hardware
+
+config CONFIG_THUMB
+	depends on !CONFIG_SAMA5D3XEK
+	bool "Build in thumb mode"
+	help
+	  Build code in thumb mode
+
+config CONFIG_SCLK	  
+	depends on CONFIG_AT91SAM9RLEK || CONFIG_AT91SAM9M10G45EK || CONFIG_AT91SAM9X5EK || CONFIG_AT91SAM9N12EK || CONFIG_SAMA5D3XEK
+	bool "Use external 32KHZ oscillator as source of slow clock"
+	help
+	  Use external 32KHZ oscillator as source of slow clock
+
+config CONFIG_DISABLE_WATCHDOG
+	bool "Disable Watchdog"
+	default y
+	help
+	  Disable the watchdog in the boostrap

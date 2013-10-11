@@ -1,0 +1,5 @@
+KNOWN ISSUES
+
+1./ With building with "gcc version 4.6.3 (Sourcery CodeBench Lite 2012.03-57)",
+    Some issue is found when running on the ek board.
+
