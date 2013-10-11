@@ -1,0 +1,81 @@
+# connect to the J-Link gdb server  
+target remote localhost:2331  
+# Set JTAG speed to 30 kHz  
+monitor endian little  
+monitor speed 30  
+# Reset the target  
+monitor reset  
+monitor sleep 10  
+
+#Disable watchdog
+monitor memU32 0xFFFFFD44 = 0x00008000
+
+#Disable all interrupters
+monitor memU32 0xFFFFF124 = 0xFFFFFFFF
+
+#Enable extern reset
+monitor memU32 0xFFFFFD08 = 0xA5000001
+
+#setup SMC0
+monitor memU32 0xFFFFE400 = 0x02020202
+monitor memU32 0xFFFFE404 = 0x0A0A0A0A
+monitor memU32 0xFFFFE408 = 0x000E000E
+monitor memU32 0xFFFFE40C = 0x10001000
+
+#set Main Oscillator
+monitor memU32 0xFFFFFC20 = 0x00006401
+
+#Setup PLLA
+monitor memU32 0xFFFFFC28 = 0x27CFBFA0
+#Setup MainClk
+monitor memU32 0xFFFFFC30 = 0x00000102
+
+#Setup PLLB
+monitor memU32 0xFFFFFC2C =  0x10053F01 # 0x20B33E0F
+
+
+
+#initialize SDRAM
+monitor memU32 0xFFFFED20 = 0x00010002
+
+monitor memU32 0xFFFFF860 = 0xFFFF0000
+monitor memU32 0xFFFFF870 = 0xFFFF0000
+monitor memU32 0xFFFFF804 = 0xFFFF0000
+
+
+monitor memU32 0xFFFFE208 = 0x2188C159
+monitor sleep 20
+monitor memU32 0xFFFFE200 = 0x00000002
+monitor memU32 0x20000000 = 0x00000000
+monitor sleep 20
+
+
+
+monitor memU32 0xFFFFE200 = 0x00000004
+monitor memU32 0x20000000 = 0x00000000
+monitor memU32 0xFFFFE200 = 0x00000004
+monitor memU32 0x20000000 = 0x00000000
+monitor memU32 0xFFFFE200 = 0x00000004
+monitor memU32 0x20000000 = 0x00000000
+monitor memU32 0xFFFFE200 = 0x00000004
+monitor memU32 0x20000000 = 0x00000000
+monitor memU32 0xFFFFE200 = 0x00000004
+monitor memU32 0x20000000 = 0x00000000
+monitor memU32 0xFFFFE200 = 0x00000004
+monitor memU32 0x20000000 = 0x00000000
+monitor memU32 0xFFFFE200 = 0x00000004
+monitor memU32 0x20000000 = 0x00000000
+monitor memU32 0xFFFFE200 = 0x00000004
+monitor memU32 0x20000000 = 0x00000000
+
+monitor memU32 0xFFFFE200 = 0x00000003
+monitor memU32 0x20000050 = 0xCAFEDEDE
+
+monitor memU32 0xFFFFE204 = 0x000002B7
+monitor memU32 0xFFFFE200 = 0x00000000
+monitor memU32 0x20000000 = 0x00000000
+
+# Setup GDB for faster downloads  
+monitor speed auto  
+break reset  
+load  

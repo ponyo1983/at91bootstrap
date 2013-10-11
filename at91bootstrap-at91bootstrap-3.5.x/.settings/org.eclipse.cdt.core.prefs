@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/org.eclipse.cdt.cross.arm.gnu.sourcery.macosx.toolchain.base.887541797/CROSS_COMPILE/delimiter=\:
+environment/project/org.eclipse.cdt.cross.arm.gnu.sourcery.macosx.toolchain.base.887541797/CROSS_COMPILE/operation=append
+environment/project/org.eclipse.cdt.cross.arm.gnu.sourcery.macosx.toolchain.base.887541797/CROSS_COMPILE/value=arm-none-eabi-
+environment/project/org.eclipse.cdt.cross.arm.gnu.sourcery.macosx.toolchain.base.887541797/append=true
+environment/project/org.eclipse.cdt.cross.arm.gnu.sourcery.macosx.toolchain.base.887541797/appendContributed=true

@@ -172,12 +172,15 @@ OBJS:= $(SOBJS-y) $(COBJS-y)
 INCL=board/$(BOARD)
 GC_SECTIONS=--gc-sections
 
-CPPFLAGS=-ffunction-sections -g -Os -Wall \
+#CPPFLAGS=-ffunction-sections -g -Os -Wall 
+
+CPPFLAGS=-ffunction-sections -g -Wall \
 	-fno-stack-protector \
 	-I$(INCL) -Iinclude -Ifs/include \
 	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)$(REV)$(SCMINFO)\" -DCOMPILE_TIME="\"$(DATE)\""
 
-ASFLAGS=-g -Os -Wall -I$(INCL) -Iinclude
+#ASFLAGS=-g -Os -Wall -I$(INCL) -Iinclude
+ASFLAGS=-g -Wall -I$(INCL) -Iinclude
 
 include	toplevel_cpp.mk
 include	board/board_cpp.mk
