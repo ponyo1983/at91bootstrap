@@ -174,13 +174,13 @@ GC_SECTIONS=--gc-sections
 
 #CPPFLAGS=-ffunction-sections -g -Os -Wall 
 
-CPPFLAGS=-ffunction-sections -g  -Wall -mcpu=arm926ej-s \
+CPPFLAGS=-ffunction-sections -g -Os -Wall -mcpu=arm926ej-s \
 	-fno-stack-protector \
 	-I$(INCL) -Iinclude -Ifs/include \
 	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)$(REV)$(SCMINFO)\" -DCOMPILE_TIME="\"$(DATE)\""
 
 #ASFLAGS=-g -Os -Wall -I$(INCL) -Iinclude
-ASFLAGS=-g -Wall -mcpu=arm926ej-s -I$(INCL) -Iinclude
+ASFLAGS=-g -Os -Wall -mcpu=arm926ej-s -I$(INCL) -Iinclude
 
 include	toplevel_cpp.mk
 include	board/board_cpp.mk
@@ -214,7 +214,7 @@ TARGETS=$(obj) $(AT91BOOTSTRAP)
 PHONY:=all
 
 all: PrintFlags $(AT91BOOTSTRAP) ChkFileSize
-
+#all: PrintFlags $(AT91BOOTSTRAP)
 PrintFlags:
 	@echo CC
 	@echo ========
