@@ -30,7 +30,7 @@
 #include "arch/at91_dbgu.h"
 
 #ifndef USART_BASE
-#define USART_BASE	AT91C_BASE_DBGU
+#define USART_BASE	AT91C_BASE_USART0
 #endif
 
 static inline void write_usart(unsigned int offset, const unsigned int value)

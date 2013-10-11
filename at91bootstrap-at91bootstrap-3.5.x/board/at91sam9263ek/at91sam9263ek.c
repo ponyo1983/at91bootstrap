@@ -250,6 +250,27 @@ static void initialize_dbgu(void)
 	usart_init(BAUDRATE(MASTER_CLOCK, 115200));
 }
 
+static void at91_usart0_hw_init(void)
+{
+	/* Configure DBGU pin */
+	const struct pio_desc usart0_pins[] = {
+		{"RXD", AT91C_PIN_PA(27), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{"TXD", AT91C_PIN_PA(26), 0, PIO_DEFAULT, PIO_PERIPH_A},
+		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+	};
+
+	/*  Configure the dbgu pins */
+	pmc_enable_periph_clock(AT91C_ID_US0);
+	pio_configure(usart0_pins);
+}
+
+static void initialize_usart0(void)
+{
+	at91_usart0_hw_init();
+
+	usart_init(BAUDRATE(MASTER_CLOCK, 115200));
+}
+
 #ifdef CONFIG_SDRAM
 static void sdramc_hw_init(void)
 {
@@ -395,13 +416,13 @@ void hw_init(void)
 	pmc_cfg_plla(PLLA_SETTINGS, PLL_LOCK_TIMEOUT);
 
 	/* PCK = PLLA = 2 * MCK */
-	pmc_cfg_mck(MCKR_SETTINGS, PLL_LOCK_TIMEOUT);
+	//pmc_cfg_mck(MCKR_SETTINGS, PLL_LOCK_TIMEOUT);
 
 	/* Switch MCK on PLLA output */
 	pmc_cfg_mck(MCKR_CSS_SETTINGS, PLL_LOCK_TIMEOUT);
 
 	/* Configure PLLB */
-	//pmc_cfg_pllb(PLLB_SETTINGS, PLL_LOCK_TIMEOUT);
+	pmc_cfg_pllb(PLLB_SETTINGS, PLL_LOCK_TIMEOUT);
 
 	/* Enable External Reset */
 	writel(AT91C_RSTC_KEY_UNLOCK | AT91C_RSTC_URSTEN, AT91C_BASE_RSTC + RSTC_RMR);
@@ -412,7 +433,8 @@ void hw_init(void)
 	timer_init();
 
 	/* Initialize dbgu */
-	initialize_dbgu();
+	//initialize_dbgu();
+	initialize_usart0();
 
 #ifdef CONFIG_SDRAM
 	/* Initialize SDRAMC0 */
@@ -495,13 +517,15 @@ void nandflash_hw_init(void)
 	/* Configure NANDFlash pins*/
 	const struct pio_desc nand_pins[] = {
 		{"NANDCS",	CONFIG_SYS_NAND_ENABLE_PIN,	1, PIO_PULLUP, PIO_OUTPUT},
+		{"WP",	AT91C_PIN_PB(18),	1, PIO_PULLUP, PIO_OUTPUT},
+		{"R/B",	AT91C_PIN_PB(19),	1, PIO_DEFAULT, PIO_INPUT},
 		{(char *)0, 	0, 0, PIO_DEFAULT, PIO_PERIPH_A},
 	};
 
 	/* Configure the NANDFlash pins */
 	pio_configure(nand_pins);
 	pmc_enable_periph_clock(AT91C_ID_PIOCDE);
-
+	pmc_enable_periph_clock(AT91C_ID_PIOB);
 	/* Setup Smart Media, first enable the address range of CS3 in HMATRIX user interface  */
 	reg = readl(AT91C_BASE_CCFG + CCFG_EBI0CSA);
 	reg |= AT91C_EBI_CS3A_SM;

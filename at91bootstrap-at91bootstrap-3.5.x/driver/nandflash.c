@@ -40,6 +40,8 @@
 #include "div.h"
 
 static struct nand_chip nand_ids[] = {
+	/* Samsung K9F1208 64MB */
+	{0xec76, 0x1000, 0x4000, 0x200, 0x10, 0x0},
 	/* Samsung K9F2G08U0M 256MB */
 	{0xecda, 0x800, 0x20000, 0x800, 0x40, 0x0},
 	/* Samsung K9F2G08U0A 256MB */
