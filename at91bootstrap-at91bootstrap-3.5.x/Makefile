@@ -174,7 +174,7 @@ GC_SECTIONS=--gc-sections
 
 #CPPFLAGS=-ffunction-sections -g -Os -Wall 
 
-CPPFLAGS=-ffunction-sections -g -Wall -mcpu=arm926ej-s \
+CPPFLAGS=-ffunction-sections -g  -Wall -mcpu=arm926ej-s \
 	-fno-stack-protector \
 	-I$(INCL) -Iinclude -Ifs/include \
 	-DAT91BOOTSTRAP_VERSION=\"$(VERSION)$(REV)$(SCMINFO)\" -DCOMPILE_TIME="\"$(DATE)\""
